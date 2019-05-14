@@ -5,8 +5,8 @@ import paho.mqtt.client as mqtt
 import json
 
 # "192.168.88.241"
-broker_address="46.48.36.15" 
-mqtt_topic="LedOut"
+broker_address="192.168.88.241" 
+mqtt_topic="Pure"
 
 def on_message(client, userdata, message):
 #     print("message received " ,str(message.payload.decode("utf-8")))
@@ -14,15 +14,18 @@ def on_message(client, userdata, message):
 #     print("message qos=",message.qos)
 #     print("message retain flag=",message.retain)   
 #     playSingleShot()
-    obj = json.loads(str(message.payload.decode("utf-8")))    
-#     val = obj['state']
-    val = int(message.payload)
-    print("received ", val)
-    send2Pd(val)
+    obj = str(message.payload.decode("utf-8"))    
+#     val = obj
+    print(obj)
+    send2Pd(obj)
 
 
 def send2Pd(message=''):
-    os.system("echo '" + message + "' | /Applications/Pd-0.49-1.app/Contents/Resources/bin/pdsend 3000 localhost udp")
+        f = open("sensors.txt","w+") 
+        f.write(message)
+        f.close() 
+        print("write!")
+        os.system("echo '" + message + "' | /Applications/Pd-0.49-1.app/Contents/Resources/bin/pdsend 3001 localhost udp")
 
 
 print("creating new mqtt client instance")
